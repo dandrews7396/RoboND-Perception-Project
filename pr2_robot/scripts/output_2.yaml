@@ -1,0 +1,116 @@
+object_list:
+- arm_name: right
+  object_name: biscuits
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0.5718789100646973
+      y: -0.24830232560634613
+      z: 0.7099186182022095
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.025
+      y: -0.71
+      z: 0.605
+  test_scene_num: 2
+- arm_name: right
+  object_name: soap
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0.5607093572616577
+      y: 0.0034290950279682875
+      z: 0.6803150773048401
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.05
+      y: -0.71
+      z: 0.605
+  test_scene_num: 2
+- arm_name: left
+  object_name: book
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0.5789960622787476
+      y: 0.2805509567260742
+      z: 0.7278540730476379
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.025
+      y: 0.71
+      z: 0.605
+  test_scene_num: 2
+- arm_name: left
+  object_name: soap2
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0.4448554217815399
+      y: 0.2268982231616974
+      z: 0.6795514225959778
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.05
+      y: 0.71
+      z: 0.605
+  test_scene_num: 2
+- arm_name: left
+  object_name: glue
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0.6310034394264221
+      y: 0.1312720626592636
+      z: 0.6831685304641724
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.07500000000000001
+      y: 0.71
+      z: 0.605
+  test_scene_num: 2
