@@ -51,12 +51,22 @@ def pcl_callback(pcl_msg):
 
 # Exercise-2 TODOs:
 
-    # TODO: Convert ROS msg to PCL data
+    # Convert ROS msg to PCL data
+    cloud = ros_to_pcl(pcl_msg)
+
     
-    # TODO: Statistical Outlier Filtering
+    # Statistical Outlier Filtering
+    sof = cloud.make_statistical_outlier_filter()
 
-    # TODO: Voxel Grid Downsampling
-
+    # Set means-K cluster: Number of neighbouring points to analyse for any given point
+    sof.set_mean_k(50)
+    # Threshold scale factor
+    x = 1.0
+    # Set standard devation multiplier threshold (x). Any point with mean distance larger than
+    # mean distance + x * std_dev will be considered an outlier
+    sof.set_std_dev_mul_thresh(x)
+    # Apply statistical outlier filter 
+    sof_filtered = sof.filter()
     # TODO: PassThrough Filter
 
     # TODO: RANSAC Plane Segmentation
@@ -68,8 +78,10 @@ def pcl_callback(pcl_msg):
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
 
     # TODO: Convert PCL data to ROS messages
-
+    ros_cloud_objects = pcl_to_ros(sof_filtered)
     # TODO: Publish ROS messages
+    pcl_objects_pub.publish(ros_cloud_objects)
+    ros_cloud_table = pcl_to_ros(pcl_msg)
 
 # Exercise-3 TODOs:
 
@@ -136,15 +148,28 @@ def pr2_mover(object_list):
 
 if __name__ == '__main__':
 
-    # TODO: ROS node initialization
+    # ROS node initialization
+    rospy.init_node('clustering', anonymous = True)
+    
+    # Create Subscribers
+    pcl_sub = rospy.Subscriber("/pr2/world/points", pc2.PointCloud2, pcl_callback, queue_size = 1)
 
-    # TODO: Create Subscribers
-
-    # TODO: Create Publishers
-
-    # TODO: Load Model From disk
-
+    # Create Publishers
+    pcl_objects_pub = rospy.Publisher("/pcl_objects", PointCloud2, queue_size=1)
+    pcl_table_pub = rospy.Publisher("/pcl_table", PointCloud2, queue_size=1)
+    pcl_cluster_pub = rospy.Publisher("/pcl_cluster", PointCloud2, queue_size=1)
+    object_markers_pub = rospy.Publisher("/object_markers", Marker, queue_size=1)
+    detected_objects_pub = rospy.Publisher("/detected_objects", DetectedObjectsArray, queue_size=1)
+    # Load Model From disk
+    model = pickle.load(open('model.sav', 'rb'))
+    clf = model['classifier']
+    encoder = LabelEncoder()
+    encoder.classes_ = model['classes']
+    scaler = model['scaler']
+    
     # Initialize color_list
     get_color_list.color_list = []
 
-    # TODO: Spin while node is not shutdown
+    # Spin while node is not shutdown
+    while not rospy.is_shutdown():
+        rospy.spin()
