@@ -29,13 +29,14 @@
 
 [//]: # (Image References)
 
-[noise]: ./scripts/images/noisey.png
-[Image2]: ./scripts/images/sof_filtered.png
-[Image3]: ./scripts/images/filtered.png
-[image4]: ./scripts/images/ncm.png
-[image4]: ./scripts/images/ncm2.png
-[image5]: ./scripts/images/ncm3.png
-[image6]: ./scripts/images/clusters.png
+[Image1]: ./pr2_robot/scripts/images/noisey.png
+[Image2]: ./pr2_robot/scripts/images/sof_filtered.png
+[Image3]: ./pr2_robot/scripts/images/filtered.png
+[Image4]: ./pr2_robot/scripts/images/ncm.png
+[Image4]: ./pr2_robot/scripts/images/ncm2.png
+[Image5]: ./pr2_robot/scripts/images/ncm3.png
+[Image6]: ./pr2_robot/scripts/images/clusters.png
+[Image7]: ./pr2_robot/scripts/images/RANSAC_plot.png
 ---
 ### Writeup / README
 
@@ -48,14 +49,30 @@ This document serves as the writeup for the Perception project.
 
 For this element of the project, I carried out the filtering as previously covered in the exercises for the perception module of the course. However, as the pcl library had been updated, I was able to make use of the statistical outlier filter. This serves to reduce the 'noise' contained within the raw image data, the result of which, can be seen in the following images.
 
-![noise](/scritps/images/noisey.png)
+![alt text][Image1]
 
 ![alt_text][Image2]
 
-#### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
+The next step was to implement a Voxel Downsampling filter.  Voxel Downsampling filters an image by splitting it into a 3D grid of Voxels, all data within that Voxel is then assigned to detected items within its bounds. These bounds can be altered in each axis, and are given the variable name `LEAF_SIZE` in my script.
 
-#### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
-Here is an example of how to include an image in your writeup.
+After Voxel Downsampling, I carried out a Passthrough filter, however I deviated from the module exercises slightly in that I carried this out twice, in both the Z and X axes. A Passthrough filter operates in a similar manner to a band-pass filter in audio electronics in that in that you set two points within a sample, and the filter only allows the data between them to pass. From the exercises, we were only using this in the Z-axis. But by the time I carried out the clustering phase of this project, I saw that the camera was also picking up the dropboxes on either side and labeling them as detected objects. So, for this reason, I decided that implementing a second Passthrough filter would be the best method stop this from occuring. There was no particular reason for choosing the X-axis for this at the time, but I believe this would be more appropriate should I move on to carry out the extra challenges.
+
+Finally, I carried out the RAndom SAmple Consenus (RANSAC) filter on the image. RANSAC works in almost the opposite manner to Voxel Downsampling, in that it takes in all the data of the point cloud and groups together the different items by using a distance limit. Any points that fall within the limit are designated to the object (inliers), and those outside are ignored (outliers). The following plot from [Wikipedia](https://en.wikipedia.org/wiki/Random_sample_consensus) is a good visualisation of this concept:
+
+![alt_text][Image7]
+
+
+#### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.
+
+For the clustering portion of `project.py` I, again, implemented the same code as for the exercises. The inliers from the RASAC filter were converted to XYZRGB format and passed through `EuclideanClusterExtraction()` using a Kd-tree with the same tolerances as in the exercises. Each of the extracted clusters were then assigned a colour, and appended to `color_cluster_point_list` which was then converted to a ROS message as `ros_cluster_cloud` and published on `pcl_cluster_pub` as seen in the following image.
+
+![alt_text][Image6]
+
+The cluster indices were also passed on for feature extraction and object recognition.
+
+#### 3. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
+
+
 
 ![demo-1](https://user-images.githubusercontent.com/20687560/28748231-46b5b912-7467-11e7-8778-3095172b7b19.png)
 
