@@ -33,10 +33,10 @@
 [Image2]: ./pr2_robot/scripts/images/sof_filtered.png
 [Image3]: ./pr2_robot/scripts/images/filtered.png
 [Image4]: ./pr2_robot/scripts/images/ncm.png
-[Image4]: ./pr2_robot/scripts/images/ncm2.png
-[Image5]: ./pr2_robot/scripts/images/ncm3.png
-[Image6]: ./pr2_robot/scripts/images/clusters.png
-[Image7]: ./pr2_robot/scripts/images/RANSAC_plot.png
+[Image5]: ./pr2_robot/scripts/images/ncm2.png
+[Image6]: ./pr2_robot/scripts/images/ncm3.png
+[Image7]: ./pr2_robot/scripts/images/clusters.png
+[Image8]: ./pr2_robot/scripts/images/RANSAC_plot.png
 ---
 ### Writeup / README
 
@@ -59,22 +59,30 @@ After Voxel Downsampling, I carried out a Passthrough filter, however I deviated
 
 Finally, I carried out the RAndom SAmple Consenus (RANSAC) filter on the image. RANSAC works in almost the opposite manner to Voxel Downsampling, in that it takes in all the data of the point cloud and groups together the different items by using a distance limit. Any points that fall within the limit are designated to the object (inliers), and those outside are ignored (outliers). The following plot from [Wikipedia](https://en.wikipedia.org/wiki/Random_sample_consensus) is a good visualisation of this concept:
 
-![alt_text][Image7]
+![alt_text][Image8]
 
 
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.
 
 For the clustering portion of `project.py` I, again, implemented the same code as for the exercises. The inliers from the RASAC filter were converted to XYZRGB format and passed through `EuclideanClusterExtraction()` using a Kd-tree with the same tolerances as in the exercises. Each of the extracted clusters were then assigned a colour, and appended to `color_cluster_point_list` which was then converted to a ROS message as `ros_cluster_cloud` and published on `pcl_cluster_pub` as seen in the following image.
 
-![alt_text][Image6]
+![alt_text][Image7]
 
 The cluster indices were also passed on for feature extraction and object recognition.
 
 #### 3. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
 
+The next step was to implement object recognition on the point cloud. In order to do this, I would first need to train a classifier to recognise the objects. I started out using the same binning strategy (64) and amount of samples taken (45) as in the exercises. This produced a good Normalised Confusion Matrix, see below, but would produce inconsistant results across the board.
 
+![alt_text][Image4]
 
-![demo-1](https://user-images.githubusercontent.com/20687560/28748231-46b5b912-7467-11e7-8778-3095172b7b19.png)
+Because of this, I chose to increase the sampling to fifty which again produced a seemingly better Confusion Matrix, but again inconsistant results.
+
+![alt_text][Image5]
+
+I then spent some time altering the values for binning and sampling, to see if I could make any improvement to the recognised objects. I found that using 64 bins produced the best results, although in altering sampling in proportion to the changes in binning always produced similar Confusion Matrices. That being said, I came to settle on using 64 bins, and a sample size of 65 produced the best results in the simulator. It does tend to classify glue as sticky notes roughly once in every five times I run test world 3. But overall, it was the most accurate in the simulator. The Normalised Confusion Matrix for this can be seen below.
+
+![alt_text][Image6]
 
 
 
