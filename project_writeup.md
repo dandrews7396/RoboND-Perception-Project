@@ -48,8 +48,9 @@ This document serves as the writeup for the Perception project.
 
 For this element of the project, I carried out the filtering as previously covered in the exercises for the perception module of the course. However, as the pcl library had been updated, I was able to make use of the statistical outlier filter. This serves to reduce the 'noise' contained within the raw image data, the result of which, can be seen in the following images.
 
-![alt text][noise]
+![noise](/scritps/images/noisey.png)
 
+![alt_text][Image2]
 
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
 
