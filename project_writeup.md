@@ -27,6 +27,15 @@
 ## [Rubric](https://review.udacity.com/#!/rubrics/1067/view) Points
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
+[//]: # (Image References)
+
+[noise]: ./scripts/images/noisey.png
+[Image2]: ./scripts/images/sof_filtered.png
+[Image3]: ./scripts/images/filtered.png
+[image4]: ./scripts/images/ncm.png
+[image4]: ./scripts/images/ncm2.png
+[image5]: ./scripts/images/ncm3.png
+[image6]: ./scripts/images/clusters.png
 ---
 ### Writeup / README
 
@@ -37,7 +46,10 @@ This document serves as the writeup for the Perception project.
 ### Exercise 1, 2 and 3 pipeline implemented
 #### 1. Complete Exercise 1 steps. Pipeline for filtering and RANSAC plane fitting implemented.
 
-For this element of the project, I carried out the filtering as previously covered in the exercises for the perceptionmodule for the course. However, as the pcl library had been updated, I was able to make use of the statistical outlier filter. This serves to reduce the 'noise' contained within the raw image data.
+For this element of the project, I carried out the filtering as previously covered in the exercises for the perception module of the course. However, as the pcl library had been updated, I was able to make use of the statistical outlier filter. This serves to reduce the 'noise' contained within the raw image data, the result of which, can be seen in the following images.
+
+![alt text][noise]
+
 
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
 
