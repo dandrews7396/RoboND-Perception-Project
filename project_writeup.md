@@ -37,6 +37,9 @@
 [Image6]: ./pr2_robot/scripts/images/ncm3.png
 [Image7]: ./pr2_robot/scripts/images/clusters.png
 [Image8]: ./pr2_robot/scripts/images/RANSAC_plot.png
+[Image9]: ./pr2_robot/scripts/images/output_1.png
+[Image10]: ./pr2_robot/scripts/images/output_2.png
+[Image11]: ./pr2_robot/scripts/images/output_3.png
 ---
 ### Writeup / README
 
@@ -85,21 +88,36 @@ I then spent some time altering the values for binning and sampling, to see if I
 ![alt_text][Image6]
 
 
-
-
-Here's | A | Snappy | Table
---- | --- | --- | ---
-1 | `highlight` | **bold** | 7.41
-2 | a | b | c
-3 | *italic* | text | 403
-4 | 2 | 3 | abcd
-
-
 ### Pick and Place Setup
 
 #### 1. For all three tabletop setups (`test*.world`), perform object recognition, then read in respective pick list (`pick_list_*.yaml`). Next construct the messages that would comprise a valid `PickPlace` request output them to `.yaml` format.
 
-And here's another image!
-![demo-2](https://user-images.githubusercontent.com/20687560/28748286-9f65680e-7468-11e7-83dc-f1a32380b89c.png)
+In carrying out the object recognition, the individual pcl clusters are extracted from the detected objects cloud and converted into an ROS array.  Then, using the `compute_color_histograms()` and `compute_normal_histograms()` functions of the `features.py` script from the `sensor_stick` exercises, we turn these arrays into feature vectors.
 
-Spend some time at the end to discuss your code, what techniques you used, what worked and why, where the implementation might fail and how you might improve it if you were going to pursue this project further.  
+The features are then passed to the classifier to make a prediction, and have a label assigned depending on that prediction.  The object markers are then published by the object_markers_pub Publisher and it's various aspects are turned into a `DetectedObject` object.
+
+Once this is completed for each of the detected object arrays, the script then uses `rospy.loginfo` to tell the user how many objects were detected, and how they were labeled by the classifier. A list containing each `DetectedObject` is then published to the `detected_objects_pub` publisher and, finally, the `pr2_mover()` function is called.
+
+To start, `pr2_mover()` initialises a number of variables that are to be used when passing object information to the `.yaml` dictionary builder. More variables are then created using information that is read in from the launch file. Having seen a conversation on the slack channel regarding this area, I decided to alter the `pick_place_project.launch` file so that it would pass the number of the test environment to the python script as a parameter.
+
+I then moved on to decide how my script would create it's reponses to pass to the robot.
+I initially used nested for loops to iterate through the pick list, then another for the detected objects list with a conditional statement to match the names in each list. This worked fine to start with but soon I realised that, in doing this, the script would not correctly record items when they were incorrectly classified. To counter this behaviour, I separated the loops into one that assigned the pick arm and placement co-ordinates, and another that assigned detected objects. These were dependent on item group and object name respectively.
+
+This now meant that if multiple items of the same name were detected or, if an item was wrongly classified as another item on the table, then both items would still be sent to the `.yaml` file. Images showing the results for each of the test environments can be seen below.
+
+![alt_text][Image9]
+Test World 1
+
+![alt_text][Image10]
+Test World 2
+
+![alt_text][Image11]
+
+Test World 3
+
+In building the dictionary to send to the `.yaml` files, I used the `make_yaml_dict()` and `send_to_yaml()` functions provided in the template code and added a print statements to show the yaml dictionary
+and notify when the `.yaml` file had been created, for debug purposes.
+
+I then went on to create another utility function to send the response commands to the robot. I did this because, for some time, I was sending the commands on the fly as they were created. But this meant that the robot would need to carry out it's pick and place cycle between creating the commands and create the yaml dictionaries after. But quite often, it would crash into the table and fail before the full yaml file could be created, which was highly frustrating.
+
+If I were to continue in developing this program further, I would need to consider a way of updating the collision data passed to the robot at the end of each cycle. I see the fact that I have separated the command creation out as a benefit, as I could use that funtion to help do this. I would potentially iterate through the detected objects point cloud, removing each one as their pick and place cycle came around. The collision map for the table could be implemented by publishing the `cloud_table` array to the `pr2/3d_map/points` topic, having rotated the robot around the base axis to ensure full coverage of the table surface and placement bins. However, due to summer holidays, I have overrun the submission deadline and will have to come back to this at a later date.
